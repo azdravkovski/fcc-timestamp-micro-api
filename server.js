@@ -2,7 +2,7 @@
 // where your node app starts
 
 // init project
-const http = request('http');
+const http = require('http');
 const express = require('express');
 const app = express();
 
