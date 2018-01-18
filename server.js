@@ -2,9 +2,9 @@
 // where your node app starts
 
 // init project
-const http = require('http');
 const express = require('express');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -28,6 +28,6 @@ app.get("/api/hello", (req, res) => {
 
 
 // listen for requests :)
-var listener = app.listen(process.env.PORT, () => {
-  console.log('Your app is listening on port ' + listener.address().port);
+app.listen(PORT, () => {
+  console.log('Your app is listening on port ' + PORT);
 });
