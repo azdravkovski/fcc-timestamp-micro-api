@@ -1,3 +1,4 @@
+'use strict'
 // server.js
 // where your node app starts
 
@@ -19,12 +20,37 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + '/views/index.html');
 });
 
+// API endpoints
+app.get('/api/timestamp/:date?', (req, res) => {
+  const unix = req.query.unix;
+  const utc = req.query.utc;
+  res.send(validateTimestamp(unix, utc));
+});
 
-// your first API endpoint... 
 app.get("/api/hello", (req, res) => {
   res.json({greeting: 'hello API'});
 });
 
+//REFACTOR WITH ONE PARAMETER
+function validateTimestamp(a, b) {
+  const result = {
+    unix: null,
+    utc: null
+  };
+  const nowUNIX = Date.now();
+  const nowUTC = new Date(Date.now()).toUTCString();
+  // const toUTC = new Date(input).getTime();
+  
+  if (!a && !b) {
+    result.unix = nowUNIX;
+    result.utc = nowUTC;
+  } else if (+a != NaN) {
+    result.unix = a;
+    result.utc = (new Date(a)).toUTCString();
+  }
+    
+  return result;
+}
 
 
 // listen for requests :)
