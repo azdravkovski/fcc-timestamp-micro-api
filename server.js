@@ -21,35 +21,40 @@ app.get("/", (req, res) => {
 });
 
 // API endpoints
-app.get('/api/timestamp/:date?', (req, res) => {
-  const unix = req.query.unix;
-  const utc = req.query.utc;
-  res.send(validateTimestamp(unix, utc));
+app.get('/api/timestamp/:date_string', (req, res) => {
+  res.send(validateTimestamp(req.params.date_string));
+});
+
+app.get('/api/timestamp/', (req, res) => {
+  const nowUNIX = Date.now();
+  const nowUTC = new Date(Date.now()).toUTCString();
+  res.send({ unix: nowUNIX, utc: nowUTC });
 });
 
 app.get("/api/hello", (req, res) => {
   res.json({greeting: 'hello API'});
 });
 
-//REFACTOR WITH ONE PARAMETER
-function validateTimestamp(a, b) {
+function validateTimestamp(timestamp) {  
+  
+  function makeUTC(input) {
+    return new Date(input).toUTCString();
+  }
+  
   const result = {
     unix: null,
     utc: null
   };
-  const nowUNIX = Date.now();
-  const nowUTC = new Date(Date.now()).toUTCString();
-  // const toUTC = new Date(input).getTime();
   
-  if (!a && !b) {
-    result.unix = nowUNIX;
-    result.utc = nowUTC;
-  } else if (+a != NaN) {
-    result.unix = a;
-    result.utc = (new Date(a)).toUTCString();
+  if (+timestamp >= 0) { //UNIX timestamp
+    result.unix = +timestamp;
+    result.utc = makeUTC(+timestamp);
+  } else if (isNaN(+timestamp)) { //ISO date
+    result.unix = Date.parse(timestamp);
+    result.utc = makeUTC(timestamp);
+  } else {
+    return result;
   }
-    
-  return result;
 }
 
 
