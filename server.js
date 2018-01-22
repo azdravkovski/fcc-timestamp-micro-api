@@ -6,6 +6,7 @@
 const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
+const validator = require('./validator');
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
@@ -22,7 +23,7 @@ app.get("/", (req, res) => {
 
 // API endpoints
 app.get('/api/timestamp/:date_string', (req, res) => {
-    res.send(validateTimestamp(req.params.date_string));
+    res.send(validator(req.params.date_string));
 });
 
 app.get('/api/timestamp/', (req, res) => {
@@ -34,29 +35,6 @@ app.get('/api/timestamp/', (req, res) => {
 app.get("/api/hello", (req, res) => {
     res.json({ greeting: 'hello API' });
 });
-
-function validateTimestamp(timestamp) {
-
-    function makeUTC(input) {
-        return new Date(input).toUTCString();
-    }
-
-    const result = {
-        unix: null,
-        utc: null
-    };
-
-    if (+timestamp >= 0) { //UNIX timestamp
-        result.unix = +timestamp;
-        result.utc = makeUTC(+timestamp);
-    } else if (isNaN(+timestamp)) { //ISO date
-        result.unix = Date.parse(timestamp);
-        result.utc = makeUTC(timestamp);
-    }
-
-    return result;
-
-}
 
 
 // listen for requests :)
